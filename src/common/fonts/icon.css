@@ -1,0 +1,58 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('icomoon.eot?a2sngb');
+  src:  url('icomoon.eot?a2sngb#iefix') format('embedded-opentype'),
+    url('icomoon.ttf?a2sngb') format('truetype'),
+    url('icomoon.woff?a2sngb') format('woff'),
+    url('icomoon.svg?a2sngb#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-thumb_up:before {
+  content: "\e900";
+}
+.icon-thumb_down:before {
+  content: "\e901";
+}
+.icon-shopping_cart:before {
+  content: "\e902";
+}
+.icon-remove_circle_outline:before {
+  content: "\e903";
+}
+.icon-keyboard_arrow_right:before {
+  content: "\e904";
+}
+.icon-favorite:before {
+  content: "\e905";
+}
+.icon-close:before {
+  content: "\e906";
+}
+.icon-check_circle:before {
+  content: "\e907";
+}
+.icon-arrow_lift:before {
+  content: "\e908";
+}
+.icon-add_circle:before {
+  content: "\e909";
+}
+
