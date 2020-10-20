@@ -15,7 +15,7 @@
         <li v-for="item in goods" class="food-list food-list-hook" :key="item.id">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item" :key="food.id">
+            <li @click="selectFood(food,$event)" v-for="food in item.foods" class="food-item" :key="food.id">
               <div class="icon">
                 <img :src="food.icon" height="57" width="57" alt="">
               </div>
@@ -24,11 +24,14 @@
                 <p class="desc" v-show="food.description">{{food.description}}</p>
                 <div class="extra">
                   <span class="content">月售{{food.sellCount}}份</span>
-                  <span>好评率{{food.rating}}%</span>
+                  <span v-show="food.rating">好评率{{food.rating}}%</span>
                 </div>
                 <div class="price">
                   <span class="now">￥{{food.price}}</span>
                   <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
+                </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol :food="food" @add="onAdd"></cartcontrol>
                 </div>
               </div>
             </li>
@@ -36,7 +39,15 @@
         </li>
       </ul>
     </div>
-    <shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
+    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"
+              ref="shopCart"></shopcart>
+    <food :food="selectedFood" :showFlag="showFlag" ref="food"></food>
+    <!-- 商品详情的返回按钮 -->
+    <transition name="detail">
+      <div class="back" @click="hide" v-show="showFlag">
+        <i class="icon-arrow_lift"></i>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -44,6 +55,8 @@
 import icon from '@/components/icon/icons'
 import BScroll from 'better-scroll'
 import shopcart from '@/components/shopcart/shopcart'
+import cartcontrol from '@/components/cartcontrol/cartcontrol'
+import food from '@/components/food/food'
 
 const ERR_OK = 0
 export default {
@@ -54,11 +67,14 @@ export default {
   },
   data() {
     return {
-      goods: {},
+      goods: [],
       menuScroll: '',
       foodsScroll: '',
       listHeight: [],
-      scrollY: 0
+      scrollY: 0,
+      selectedFood: {},
+      cartcontrolDom: '',
+      showFlag: false // 显示商品详情
     }
   },
   computed: {
@@ -71,6 +87,17 @@ export default {
         }
       }
       return 0
+    },
+    selectFoods() {
+      let foodArr = []
+      this.goods.forEach((good) => {
+        good.foods.forEach((food) => {
+          if (food.count) {
+            foodArr.push(food)
+          }
+        })
+      })
+      return foodArr
     }
   },
   created() {
@@ -90,9 +117,14 @@ export default {
     })
   },
   components: {
-    icon, shopcart
+    icon, shopcart, cartcontrol, food
   },
   methods: {
+    selectFood(food) {
+      this.selectedFood = food
+      this.showFlag = true
+      this.$refs.food.show()
+    },
     selectMenu(index, event) {
       // 用来阻止浏览器派发的事件
       // if (!event._constructed) {
@@ -107,7 +139,8 @@ export default {
         click: true
       })
       this.foodsScroll = BScroll(this.$refs.foodsWrapper, {
-        probeType: 3
+        probeType: 3,
+        click: true
       })
       this.foodsScroll.on('scroll', (pos) => {
         // 下拉动作
@@ -123,6 +156,19 @@ export default {
         height += item.clientHeight
         this.listHeight.push(height)
       }
+    },
+    onAdd(el) {
+      this.$refs.shopCart.drop(el) // 调用另外组件的方法（父组件调用子组件的方法）
+    },
+    hide() {
+      this.showFlag = false
+    },
+    beforeDetail(el) {
+
+    },
+    enterDetail() {
+    },
+    afterDetail() {
     }
   }
 }
@@ -227,5 +273,33 @@ export default {
             text-decoration: line-through
             font-size: 10px
             color: rgb(147, 153, 159)
+
+        .cartcontrol-wrapper
+          position: absolute
+          right: 0
+          bottom: 12px
+
+    .back
+      position: fixed
+      top: 10px
+      left: 0
+      z-index: 210
+      opacity: 1
+      transform: translate3d(0, 0, 0)
+
+      .icon-arrow_lift
+        display: block
+        padding: 10px
+        font-size: 20px
+        color: #fff
+        text-shadow:2px 2px 2px #000;
+
+    .detail-enter-active, .detail-leave-active
+      transition: all .4s linear
+
+    .detail-enter, .detail-leave-to
+      /* .slide-fade-leave-active for below version 2.1.8 */
+      transform: translateX(350px);
+      opacity: 0;
 
 </style>
