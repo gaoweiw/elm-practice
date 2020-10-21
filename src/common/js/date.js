@@ -1,3 +1,9 @@
+/**
+ * 转换date公用方法
+ * @param date
+ * @param fmt
+ * @returns {*}
+ */
 export function formatDate(date, fmt) {
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substring(4 - RegExp.$1.length))

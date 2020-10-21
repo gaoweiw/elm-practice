@@ -28,6 +28,10 @@
             </div>
           </li>
         </ul>
+        <div class="favorite" @click="toggleFavorite">
+          <span class="icon-favorite" :class="{'active':favorite}"></span>
+          <span class="text">{{favoriteText}}</span>
+        </div>
       </div>
       <split></split>
       <div class="bulletin">
@@ -53,6 +57,13 @@
           </ul>
         </div>
       </div>
+      <split></split>
+      <div class="info">
+        <h1 class="title">商家信息</h1>
+        <ul>
+          <li class="info-item" v-for="(info,index) in seller.infos" :key="index">{{info}}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -62,6 +73,7 @@ import star from '@/components/star/star'
 import icon from '@/components/icon/icons'
 import split from '@/components/split/split'
 import BScroll from 'better-scroll'
+import {saveTolocal, loadFromLocal} from '../../common/js/store'
 
 export default {
   props: {
@@ -73,7 +85,10 @@ export default {
     return {
       scroll: '',
       picScroll: '',
-      ulWidth: 0
+      ulWidth: 0, // ul的宽度
+      favorite: (() => { // 立即执行函数
+        return loadFromLocal(this.seller.id, 'favorite', false)
+      })()
     }
   },
   created() {
@@ -92,6 +107,12 @@ export default {
       this._initScroll()
       this._initPics()
     }
+  },
+  computed: {
+    favoriteText() {
+      return this.favorite ? '已收藏' : '收藏'
+    }
+
   },
   methods: {
     _initScroll() {
@@ -120,6 +141,10 @@ export default {
           }
         })
       }
+    },
+    toggleFavorite() {
+      this.favorite = !this.favorite
+      saveTolocal(this.seller.id, 'favorite', this.favorite)
     }
   },
   components: {
@@ -140,6 +165,7 @@ export default {
 
     .overview
       padding: 18px
+      position: relative
 
       .title
         margin-bottom: 8px
@@ -190,6 +216,28 @@ export default {
 
             .stress
               font-size: 24px
+
+      .favorite
+        width: 50px
+        position: absolute
+        right: 11px
+        top: 18px
+        text-align: center
+
+        .icon-favorite
+          margin-bottom: 4px
+          display: block
+          line-height: 24px
+          font-size: 24px
+          color: #d4d6d9
+
+          &.active
+            color: rgb(240, 20, 20)
+
+        .text
+          line-height: 10px
+          color: rgb(77, 85, 93)
+          font-size: 14px
 
     .bulletin
       padding: 18px 18px 0 18px
@@ -245,7 +293,25 @@ export default {
             margin-right: 6px
             width: 120px
             height: 90
-
             &:last-child
               margin: 0
+
+    .info
+      padding: 18px 18px 0 18px
+      color: rgb(7, 17, 27)
+
+      .title
+        padding-bottom: 12px
+        line-height: 14px
+        font-sieze: 14px
+        border-1px(rgba(7, 17, 27, 0.1))
+
+      .info-item
+        padding: 16px 12px
+        line-height: 16px
+        border-1px(rgba(7, 17, 27, 0.1))
+        font-size: 12px
+
+        &:last-child
+          border-none()
 </style>

@@ -162,13 +162,6 @@ export default {
     },
     hide() {
       this.showFlag = false
-    },
-    beforeDetail(el) {
-
-    },
-    enterDetail() {
-    },
-    afterDetail() {
     }
   }
 }
